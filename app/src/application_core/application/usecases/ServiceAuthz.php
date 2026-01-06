@@ -52,10 +52,6 @@ class ServiceAuthz implements ServiceAuthzInterface
         return $profile->role === self::ROLE_PATIENT && $profile->id === $patientId;
     }
 
-    public function canManageIndisponibilite(ProfileDTO $profile, string $praticienId): bool {
-        return $profile->role === self::ROLE_PRATICIEN && $profile->id === $praticienId;
-    }
-
 }
 
 

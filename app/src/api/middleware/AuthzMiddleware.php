@@ -51,17 +51,8 @@ class AuthzMiddleware
                     $patientId = $route->getArgument('id');
                     $isAllowed = $this->authzService->canAccessPatientConsultations($profile, $patientId);
                     break;
-                case 'praticien.indisponibilites':
-                case 'praticien.indisponibilite.create':
-                    $praticienId = $route->getArgument('id');
-                    $isAllowed = $this->authzService->canManageIndisponibilite($profile, $praticienId);
-                    break;
-                case 'praticien.indisponibilite.delete':
-                    $praticienId = $route->getArgument('id');
-                    $isAllowed = $this->authzService->canManageIndisponibilite($profile, $praticienId);
-                    break;
                 default:
-                    throw new \Exception("Aucune règle d'autorisation définie pour cette route", 403);
+                    throw new \Exception("Aucune règle d’autorisation définie pour cette route", 403);
             }
 
             if (!$isAllowed) {

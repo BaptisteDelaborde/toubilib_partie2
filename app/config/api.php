@@ -15,10 +15,6 @@ use toubilib\api\actions\AnnulerRDVAction;
 use toubilib\core\application\ports\api\ServicePraticienInterface;
 use toubilib\core\application\ports\api\ServiceRdvInterface;
 use toubilib\api\actions\SigninAction;
-use toubilib\api\actions\CreerIndisponibiliteAction;
-use toubilib\api\actions\ListerIndisponibilitesAction;
-use toubilib\api\actions\SupprimerIndisponibiliteAction;
-use toubilib\core\application\ports\api\ServiceIndisponibiliteInterface;
 use toubilib\core\application\ports\api\ServiceUserInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
@@ -96,27 +92,6 @@ return [
     SigninAction::class => function($c){
         return new SigninAction(
             $c->get(AuthnProviderInterface::class)
-        );
-    },
-
-    // Créer indisponibilité
-    CreerIndisponibiliteAction::class => function($c) {
-        return new CreerIndisponibiliteAction(
-            $c->get(ServiceIndisponibiliteInterface::class)
-        );
-    },
-
-    // Lister indisponibilités
-    ListerIndisponibilitesAction::class => function($c) {
-        return new ListerIndisponibilitesAction(
-            $c->get(ServiceIndisponibiliteInterface::class)
-        );
-    },
-
-    // Supprimer indisponibilité
-    SupprimerIndisponibiliteAction::class => function($c) {
-        return new SupprimerIndisponibiliteAction(
-            $c->get(ServiceIndisponibiliteInterface::class)
         );
     },
 ];

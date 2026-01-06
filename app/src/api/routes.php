@@ -16,12 +16,8 @@ use toubilib\api\actions\NonHonorerRDVAction;
 use toubilib\api\middleware\AuthMiddleware;
 use toubilib\api\middleware\AuthzMiddleware;
 use toubilib\api\middleware\ValidateRDVMiddleware;
-use toubilib\api\middleware\ValidateIndisponibiliteMiddleware;
 use toubilib\api\actions\SigninAction;
 use toubilib\api\actions\HistoriquePatientAction;
-use toubilib\api\actions\CreerIndisponibiliteAction;
-use toubilib\api\actions\ListerIndisponibilitesAction;
-use toubilib\api\actions\SupprimerIndisponibiliteAction;
 
 return function( \Slim\App $app):\Slim\App {
 
@@ -59,12 +55,8 @@ return function( \Slim\App $app):\Slim\App {
     $app->post('/signin', SigninAction::class)->setName('signin');
 
     // Route pour récupérer l'historique des consultations d'un patient
-    $app->get('/patients/{id}/consultations',HistoriquePatientAction::class)->setName('patients.consultations')->add(AuthzMiddleware::class)->add(AuthMiddleware::class);
+    $app->get('/patients/{id}/consultations',HistoriquePatientAction::class)->setName('patients.consultations')->add(AuthzMiddleware::class)->add(AuthMiddleware::class);;
 
-    // Routes pour gérer les indisponibilités
-    $app->get('/praticiens/{id}/indisponibilites', ListerIndisponibilitesAction::class)->setName('praticien.indisponibilites')->add(AuthzMiddleware::class)->add(AuthMiddleware::class);
-    $app->post('/praticiens/{id}/indisponibilites', CreerIndisponibiliteAction::class)->add(ValidateIndisponibiliteMiddleware::class)->setName('praticien.indisponibilite.create')->add(AuthzMiddleware::class)->add(AuthMiddleware::class);
-    $app->delete('/praticiens/{id}/indisponibilites/{indispo_id}', SupprimerIndisponibiliteAction::class)->setName('praticien.indisponibilite.delete')->add(AuthzMiddleware::class)->add(AuthMiddleware::class);
 
     return $app;
 };

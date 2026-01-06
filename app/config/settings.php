@@ -3,11 +3,9 @@
 use Psr\Container\ContainerInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PatientRepositoryInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\IndisponibiliteRepositoryInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
 use toubilib\infra\repositories\PDOAuthReposiroty;
-use toubilib\infra\repositories\PDOIndisponibiliteRepository;
 use toubilib\infra\repositories\PDOPatientRepository;
 use toubilib\infra\repositories\PDOPraticienRepository;
 use toubilib\infra\repositories\PDORdvRepository;
@@ -108,11 +106,6 @@ return [
     // Repository Auth
     AuthRepositoryInterface::class => function (ContainerInterface $c) {
     return new PDOAuthReposiroty($c->get('db.toubiauth'));
-    },
-
-    // Repository Indisponibilite
-    IndisponibiliteRepositoryInterface::class => function (ContainerInterface $c) {
-    return new PDOIndisponibiliteRepository($c->get('db.toubiprat'));
     },
 ];
 

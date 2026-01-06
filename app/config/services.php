@@ -7,17 +7,14 @@ use toubilib\api\providers\AuthnProviderInterface;
 use toubilib\api\providers\JWTAuthnProvider;
 use toubilib\api\providers\JWTManager;
 use toubilib\core\application\ports\api\ServiceAuthzInterface;
-use toubilib\core\application\ports\api\ServiceIndisponibiliteInterface;
 use toubilib\core\application\ports\api\ServicePatientInterface;
 use toubilib\core\application\ports\api\ServicePraticienInterface;
 use toubilib\core\application\ports\api\ServiceRdvInterface;
 use toubilib\core\application\ports\api\ServiceUserInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\IndisponibiliteRepositoryInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PatientRepositoryInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
 use toubilib\core\application\usecases\ServiceAuthz;
-use toubilib\core\application\usecases\ServiceIndisponibilite;
 use toubilib\core\application\usecases\ServicePatient;
 use toubilib\core\application\usecases\ServicePraticien;
 use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
@@ -37,12 +34,7 @@ return [
         $repository = $container->get(RdvRepositoryInterface::class);
         $servicePatient = $container->get(ServicePatientInterface::class);
         $servicePatricien = $container->get(ServicePraticienInterface::class);
-        $serviceIndisponibilite = $container->get(ServiceIndisponibiliteInterface::class);
-        return new ServiceRdv($repository, $servicePatient, $servicePatricien, $serviceIndisponibilite);
-    },
-    ServiceIndisponibiliteInterface::class => function (Container $container) {
-        $repository = $container->get(IndisponibiliteRepositoryInterface::class);
-        return new ServiceIndisponibilite($repository);
+        return new ServiceRdv($repository, $servicePatient, $servicePatricien);
     },
     ServiceUserInterface::class => function (Container $container) {
         $authRepo = $container->get(AuthRepositoryInterface::class);

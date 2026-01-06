@@ -32,8 +32,7 @@ services:
       - toubilib.net
     volumes:
       - ./sql/toubiprat.schema.sql:/docker-entrypoint-initdb.d/01.schema.sql
-      - ./sql/indisponibilite.schema.sql:/docker-entrypoint-initdb.d/02.indisponibilite.schema.sql
-      - ./sql/toubiprat.data.sql:/docker-entrypoint-initdb.d/03.data.sql
+      - ./sql/toubiprat.data.sql:/docker-entrypoint-initdb.d/02.data.sql
 
   toubiauth.db:
     image: 'postgres:latest'
