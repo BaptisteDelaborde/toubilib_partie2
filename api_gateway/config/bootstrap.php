@@ -2,6 +2,7 @@
 
 use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
+use gateway\api\middleware\CorsMiddleware;
 
 $containerBuilder = new ContainerBuilder();
 $containerBuilder->useAutowiring(false);
@@ -14,6 +15,10 @@ $container = $containerBuilder->build();
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 
+$app->add(new CorsMiddleware());
+
+$app->addBodyParsingMiddleware();
+$app->addRoutingMiddleware();
 
 $app = (require __DIR__ . '/../src/api/routeGateway.php')($app);
 
