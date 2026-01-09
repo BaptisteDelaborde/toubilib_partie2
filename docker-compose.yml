@@ -9,7 +9,7 @@ services:
       context: build
       dockerfile: 8.4-cli.Dockerfile
     ports:
-      - '8080:80'
+      - '8081:80'
     volumes:
       - ./app:/var/php
     working_dir: /var/php
