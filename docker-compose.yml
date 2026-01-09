@@ -3,6 +3,20 @@ networks:
     driver: bridge
 
 services:
+  #Api gateaway
+  api_gateway:
+    build:
+      context: build
+      dockerfile: 8.4-cli.Dockerfile
+    ports:
+      - '5555:80'
+    volumes:
+      - ./app:/var/php
+    working_dir: /var/php
+    networks:
+      - toubilib.net
+    command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
+
   # service api.toubeelib : api pour la prise de rdv
   #
   api.toubilib:
