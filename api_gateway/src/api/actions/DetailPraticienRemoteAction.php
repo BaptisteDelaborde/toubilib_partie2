@@ -6,9 +6,10 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Slim\Exception\HttpNotFoundException;
+use Slim\Exception\HttpInternalServerErrorException;
 
 class DetailPraticienRemoteAction {
-
     private Client $client;
 
     public function __construct(Client $client){
@@ -21,14 +22,14 @@ class DetailPraticienRemoteAction {
         try {
             $apiResponse = $this->client->get("/praticiens/$id");
         } catch (RequestException $e) {
-            if ($e->hasResponse()) {
-                $response->getBody()->write($e->getResponse()->getBody()->getContents());
-                return $response->withStatus($e->getResponse()->getStatusCode())
-                    ->withHeader('Content-Type', 'application/json');
+            if ($e->hasResponse() && $e->getResponse()->getStatusCode() === 404) {
+                throw new HttpNotFoundException($request, "Le praticien $id n'existe pas.");
             }
+            throw new HttpInternalServerErrorException($request, "Erreur de communication avec le service distant.");
+        }
 
-            $response->getBody()->write(json_encode(['error' => 'Service unavailable']));
-            return $response->withStatus(503)->withHeader('Content-Type', 'application/json');
+        if ($apiResponse->getStatusCode() === 404) {
+            throw new HttpNotFoundException($request, "Le praticien $id n'existe pas.");
         }
 
         $response->getBody()->write($apiResponse->getBody()->getContents());
