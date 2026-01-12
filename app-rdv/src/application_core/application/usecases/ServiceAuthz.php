@@ -5,8 +5,8 @@ namespace toubilib\core\application\usecases;
 
 use toubilib\core\application\ports\api\ProfileDTO;
 use toubilib\core\application\ports\api\ServiceAuthzInterface;
+use toubilib\core\application\ports\api\ServicePraticienInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
 use toubilib\core\domain\entities\Rdv;
 
 class ServiceAuthz implements ServiceAuthzInterface
@@ -16,15 +16,17 @@ class ServiceAuthz implements ServiceAuthzInterface
 
     public function __construct(
         private readonly RdvRepositoryInterface $rdvRepository,
-        private readonly PraticienRepositoryInterface $praticienRepository
+        private readonly ?ServicePraticienInterface $servicePraticien = null
     ) {
     }
 
     public function canAccessPraticienAgenda(ProfileDTO $profile, string $praticienId): bool
     {
-        $exists = $this->praticienRepository->findById($praticienId) !== null;
-        if (!$exists) {
-            return false;
+        if ($this->servicePraticien !== null) {
+            $praticien = $this->servicePraticien->getPraticienDetail($praticienId);
+            if ($praticien === null) {
+                return false;
+            }
         }
 
         return in_array($profile->role, [self::ROLE_PATIENT, self::ROLE_PRATICIEN], true);

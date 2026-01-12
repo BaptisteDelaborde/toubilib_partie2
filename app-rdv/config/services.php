@@ -13,18 +13,27 @@ use toubilib\core\application\ports\api\ServiceRdvInterface;
 use toubilib\core\application\ports\api\ServiceUserInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\AuthRepositoryInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PatientRepositoryInterface;
-use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
+use GuzzleHttp\Client;
 use toubilib\core\application\usecases\ServiceAuthz;
 use toubilib\core\application\usecases\ServicePatient;
-use toubilib\core\application\usecases\ServicePraticien;
 use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
 use toubilib\core\application\usecases\ServiceRdv;
 use toubilib\core\application\usecases\ServiceUser;
+use toubilib\infra\adapters\PraticienRemoteAdapter;
 
 return [
+    'client.praticiens' => function (Container $container) {
+        $settings = $container->get('settings');
+        $baseUri = $settings['praticiens_api_url'] ?? 'http://app-praticiens:80';
+        return new Client([
+            'base_uri' => $baseUri,
+            'timeout' => 5.0,
+        ]);
+    },
+
     ServicePraticienInterface::class => function (Container $container) {
-        $repository = $container->get(PraticienRepositoryInterface::class);
-        return new ServicePraticien($repository);
+        $httpClient = $container->get('client.praticiens');
+        return new PraticienRemoteAdapter($httpClient);
     },
     ServicePatientInterface::class => function(Container $container){
         $repository = $container->get(PatientRepositoryInterface::class);
@@ -42,8 +51,8 @@ return [
     },
     ServiceAuthzInterface::class => function (Container $container) {
         $rdvRepo = $container->get(RdvRepositoryInterface::class);
-        $praticienRepo = $container->get(PraticienRepositoryInterface::class);
-        return new ServiceAuthz($rdvRepo, $praticienRepo);
+        $servicePraticien = $container->get(ServicePraticienInterface::class);
+        return new ServiceAuthz($rdvRepo, $servicePraticien);
     },
     JWTManager::class => function() {
         $secretKey = $_ENV['JWT_SECRET'];
@@ -56,8 +65,8 @@ return [
     },
     ServiceAuthz::class => function (Container $container) {
         $rdvRepo = $container->get(RdvRepositoryInterface::class);
-        $praticienRepo = $container->get(PraticienRepositoryInterface::class);
-        return new ServiceAuthz($rdvRepo, $praticienRepo);
+        $servicePraticien = $container->get(ServicePraticienInterface::class);
+        return new ServiceAuthz($rdvRepo, $servicePraticien);
     },
 
     AuthzMiddleware::class => function (Container $container) {
