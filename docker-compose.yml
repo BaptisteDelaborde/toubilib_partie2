@@ -11,7 +11,7 @@ services:
     ports:
       - '8081:80'
     volumes:
-      - ./app:/var/php
+      - ./api_gateway:/var/php
     working_dir: /var/php
     networks:
       - toubilib.net
@@ -35,7 +35,23 @@ services:
       - toubiauth.db
     command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
 
-    # service toubiprat.db : base de données postgresql pour les praticiens
+  # service app-praticiens : microservice pour la gestion des praticiens
+  app-praticiens:
+    build:
+      context: build
+      dockerfile: 8.4-cli.Dockerfile
+    ports:
+      - '6081:80'
+    volumes:
+      - ./app-praticiens:/var/php
+    working_dir: /var/php
+    networks:
+      - toubilib.net
+    depends_on:
+      - toubiprati.db
+    command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
+
+  # service toubiprat.db : base de données postgresql pour les praticiens
 
   toubiprati.db:
     image: 'postgres:latest'
