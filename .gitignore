@@ -5,6 +5,8 @@
 /coverage/
 # Vendor
 /vendor/
+/api_gateway/vendor/
+/app-praticiens/vendor/
 # Logs
 /app/logs/*
 !/app/logs/README.md

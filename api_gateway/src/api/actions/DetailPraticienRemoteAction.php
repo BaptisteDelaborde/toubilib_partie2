@@ -25,11 +25,7 @@ class DetailPraticienRemoteAction {
             if ($e->hasResponse() && $e->getResponse()->getStatusCode() === 404) {
                 throw new HttpNotFoundException($request, "Le praticien $id n'existe pas.");
             }
-            throw new HttpInternalServerErrorException($request, "Erreur de communication avec le service distant.");
-        }
-
-        if ($apiResponse->getStatusCode() === 404) {
-            throw new HttpNotFoundException($request, "Le praticien $id n'existe pas.");
+            throw new HttpInternalServerErrorException($request, "Erreur de communication avec le service praticiens.", $e);
         }
 
         $response->getBody()->write($apiResponse->getBody()->getContents());

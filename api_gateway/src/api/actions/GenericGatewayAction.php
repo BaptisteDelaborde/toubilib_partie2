@@ -10,27 +10,39 @@ use Slim\Exception\HttpNotFoundException;
 use Slim\Exception\HttpInternalServerErrorException;
 
 class GenericGatewayAction {
-    private Client $client;
+    private Client $praticiensClient;
+    private Client $toubilibClient;
 
-    public function __construct(Client $client){
-        $this->client = $client;
+    public function __construct(Client $praticiensClient, Client $toubilibClient){
+        $this->praticiensClient = $praticiensClient;
+        $this->toubilibClient = $toubilibClient;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response {
         $method = $request->getMethod();
-        $path = $args['routes'] ?? '';
+        $path = '/' . ($args['routes'] ?? '');
+
+        $client = $this->selectClient($path);
 
         $headers = $request->getHeaders();
         unset($headers['Host']);
         unset($headers['Content-Length']);
 
+        $options = [
+            'query' => $request->getQueryParams(),
+            'headers' => $headers,
+            'http_errors' => true
+        ];
+
+        if (in_array($method, ['POST', 'PUT', 'PATCH'])) {
+            $body = $request->getBody();
+            if ($body->getSize() > 0) {
+                $options['body'] = $body;
+            }
+        }
+
         try {
-            $apiResponse = $this->client->request($method, $path, [
-                'query' => $request->getQueryParams(),
-                'headers' => $headers,
-                'body' => $request->getBody(),
-                'http_errors' => true
-            ]);
+            $apiResponse = $client->request($method, $path, $options);
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
                 $statusCode = $e->getResponse()->getStatusCode();
@@ -43,5 +55,16 @@ class GenericGatewayAction {
         $response->getBody()->write($apiResponse->getBody()->getContents());
         return $response->withStatus($apiResponse->getStatusCode())
             ->withHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * Sélectionne le bon client par rapprot au chemin
+     */
+    private function selectClient(string $path): Client
+    {
+        if (str_starts_with($path, '/praticiens')) {
+            return $this->praticiensClient;
+        }
+        return $this->toubilibClient;
     }
 }

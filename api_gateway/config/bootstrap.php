@@ -8,7 +8,7 @@ $containerBuilder = new ContainerBuilder();
 $containerBuilder->useAutowiring(false);
 
 $containerBuilder->addDefinitions(require __DIR__ . '/settings.php');
-$containerBuilder->addDefinitions(require __DIR__ . '/services.php');
+$containerBuilder->addDefinitions(require __DIR__ . '/api.php');
 
 $container = $containerBuilder->build();
 
