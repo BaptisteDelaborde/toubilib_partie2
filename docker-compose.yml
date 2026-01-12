@@ -51,6 +51,22 @@ services:
       - toubiprati.db
     command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
 
+  # service app-rdv : microservice pour la gestion des rendez-vous
+  app-rdv:
+    build:
+      context: build
+      dockerfile: 8.4-cli.Dockerfile
+    ports:
+      - '6082:80'
+    volumes:
+      - ./app-rdv:/var/php
+    working_dir: /var/php
+    networks:
+      - toubilib.net
+    depends_on:
+      - toubirdv.db
+    command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
+
   # service toubiprat.db : base de données postgresql pour les praticiens
 
   toubiprati.db:
