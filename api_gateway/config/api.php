@@ -15,6 +15,14 @@ return [
         ]);
     },
 
+    'client.rdv' => function (Container $c) {
+        $settings = $c->get('settings');
+        return new Client([
+            'base_uri' => $settings['services']['rdv_api'],
+            'timeout' => 5.0,
+        ]);
+    },
+
     'client.toubilib' => function (Container $c) {
         $settings = $c->get('settings');
         return new Client([
@@ -26,6 +34,7 @@ return [
     GenericGatewayAction::class => function (Container $c) {
         return new GenericGatewayAction(
             $c->get('client.praticiens'),
+            $c->get('client.rdv'),
             $c->get('client.toubilib')
         );
     },

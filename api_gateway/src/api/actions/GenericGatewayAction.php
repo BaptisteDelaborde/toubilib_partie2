@@ -11,10 +11,12 @@ use Slim\Exception\HttpInternalServerErrorException;
 
 class GenericGatewayAction {
     private Client $praticiensClient;
+    private Client $rdvClient;
     private Client $toubilibClient;
 
-    public function __construct(Client $praticiensClient, Client $toubilibClient){
+    public function __construct(Client $praticiensClient, Client $rdvClient, Client $toubilibClient){
         $this->praticiensClient = $praticiensClient;
+        $this->rdvClient = $rdvClient;
         $this->toubilibClient = $toubilibClient;
     }
 
@@ -58,13 +60,19 @@ class GenericGatewayAction {
     }
 
     /**
-     * Sélectionne le bon client par rapprot au chemin
+     * Sélectionne le bon client par rapport au chemin
      */
     private function selectClient(string $path): Client
     {
+        // app-rdv
+        if (str_starts_with($path, '/rdvs') || str_contains($path, '/rdvs')) {
+            return $this->rdvClient;
+        }
+        // app-praticiens
         if (str_starts_with($path, '/praticiens')) {
             return $this->praticiensClient;
         }
+        // default api.toubilib
         return $this->toubilibClient;
     }
 }
