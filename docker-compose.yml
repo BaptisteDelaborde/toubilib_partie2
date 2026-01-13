@@ -67,6 +67,22 @@ services:
       - toubirdv.db
     command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
 
+  # service app-auth : microservice pour l'authentification
+  app-auth:
+    build:
+      context: build
+      dockerfile: 8.4-cli.Dockerfile
+    ports:
+      - '6084:80'
+    volumes:
+      - ./app-auth:/var/php
+    working_dir: /var/php
+    networks:
+      - toubilib.net
+    depends_on:
+      - api_gateway
+    command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
+
   # service toubiprat.db : base de données postgresql pour les praticiens
 
   toubiprati.db:

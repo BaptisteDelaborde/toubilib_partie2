@@ -20,4 +20,4 @@ cache.properties
 composer.phar
 composer.lock
 /app/vendor/
-/app/config/.env
+*.env
