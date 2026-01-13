@@ -5,10 +5,11 @@ use Slim\Factory\AppFactory;
 use gateway\api\middleware\CorsMiddleware;
 
 $containerBuilder = new ContainerBuilder();
-$containerBuilder->useAutowiring(false);
+$containerBuilder->useAutowiring(true);
 
 $containerBuilder->addDefinitions(require __DIR__ . '/settings.php');
 $containerBuilder->addDefinitions(require __DIR__ . '/api.php');
+$containerBuilder->addDefinitions(require __DIR__ . '/services.php');
 
 $container = $containerBuilder->build();
 

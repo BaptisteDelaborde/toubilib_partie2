@@ -18,8 +18,12 @@ class GuzzleClient implements ClientInterface
         ]);
     }
 
-    public function get(string $uri): ResponseInterface
-    {
+    public function get(string $uri): ResponseInterface {
         return $this->client->get($uri);
     }
+
+    public function post(string $uri, array $options = []): ResponseInterface {
+        return $this->client->post($uri, $options);
+    }
+
 }

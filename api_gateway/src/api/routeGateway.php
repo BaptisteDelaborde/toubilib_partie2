@@ -24,9 +24,9 @@ return function (App $app) {
     
     $app->get('/praticiens', ListePraticiensRemoteAction::class);
     $app->get('/praticiens/{id}', DetailPraticienRemoteAction::class);
-    $app->get('/register', RegisterAction::class);
-    $app->get('/signin', SigninAction::class);
-    $app->get('/refresh', RefreshAction::class);
+    $app->post('/register', RegisterAction::class);
+    $app->post('/signin', SigninAction::class);
+    $app->post('/refresh', RefreshAction::class);
     $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', GenericGatewayAction::class);
     return $app;
 };
