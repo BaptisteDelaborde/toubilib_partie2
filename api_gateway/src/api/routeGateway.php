@@ -5,6 +5,8 @@ use gateway\api\actions\GenericGatewayAction;
 use Slim\App;
 use gateway\api\actions\ListePraticiensRemoteAction;
 use gateway\api\actions\RegisterAction;
+use gateway\api\actions\RefreshAction;
+use gateway\api\actions\SigninAction;
 
 
 return function (App $app) {
