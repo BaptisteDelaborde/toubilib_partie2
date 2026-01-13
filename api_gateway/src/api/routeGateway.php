@@ -4,6 +4,7 @@ use gateway\api\actions\DetailPraticienRemoteAction;
 use gateway\api\actions\GenericGatewayAction;
 use Slim\App;
 use Gateway\api\actions\ListePraticiensRemoteAction;
+use gateway\api\actions\RegisterAction;
 
 
 return function (App $app) {
@@ -21,6 +22,9 @@ return function (App $app) {
     
     $app->get('/praticiens', ListePraticiensRemoteAction::class);
     $app->get('/praticiens/{id}', DetailPraticienRemoteAction::class);
+    $app->get('/register', RegisterAction::class);
+    $app->get('/register', SigninAction::class);
+    $app->get('/register', RefreshAction::class);
     $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', GenericGatewayAction::class);
     return $app;
 };
