@@ -2,9 +2,9 @@
 
 use DI\Container;
 use GuzzleHttp\Client;
-use Gateway\api\actions\ListePraticiensRemoteAction;
-use Gateway\api\actions\DetailPraticienRemoteAction;
-use Gateway\api\actions\GenericGatewayAction;
+use gateway\api\actions\ListePraticiensRemoteAction;
+use gateway\api\actions\DetailPraticienRemoteAction;
+use gateway\api\actions\GenericGatewayAction;
 
 return [
     'client.praticiens' => function (Container $c) {

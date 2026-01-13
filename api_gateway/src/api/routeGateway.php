@@ -3,7 +3,7 @@
 use gateway\api\actions\DetailPraticienRemoteAction;
 use gateway\api\actions\GenericGatewayAction;
 use Slim\App;
-use Gateway\api\actions\ListePraticiensRemoteAction;
+use gateway\api\actions\ListePraticiensRemoteAction;
 
 
 return function (App $app) {
