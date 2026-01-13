@@ -21,3 +21,4 @@ composer.phar
 composer.lock
 /app/vendor/
 *.env
+
