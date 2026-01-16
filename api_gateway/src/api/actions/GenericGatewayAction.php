@@ -72,6 +72,10 @@ class GenericGatewayAction {
         if (str_starts_with($path, '/praticiens')) {
             return $this->praticiensClient;
         }
+        // app-auth
+        if (str_starts_with($path, '/auth')) {
+            return $this->authClient;
+        }
         // default api.toubilib
         return $this->toubilibClient;
     }
