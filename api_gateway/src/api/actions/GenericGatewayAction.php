@@ -39,9 +39,17 @@ class GenericGatewayAction {
         ];
 
         if (in_array($method, ['POST', 'PUT', 'PATCH'])) {
-            $body = $request->getBody();
-            if ($body->getSize() > 0) {
-                $options['body'] = $body;
+            $parsedBody = $request->getParsedBody();
+            if (!empty($parsedBody)) {
+                // Utiliser 'json' pour encoder automatiquement en JSON et définir le Content-Type
+                $options['json'] = $parsedBody;
+            } else {
+                // Si pas de parsedBody, utiliser le body brut
+                $body = $request->getBody();
+                $body->rewind(); // Réinitialiser le pointeur
+                if ($body->getSize() > 0) {
+                    $options['body'] = $body->getContents();
+                }
             }
         }
 
