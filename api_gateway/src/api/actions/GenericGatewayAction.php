@@ -13,11 +13,13 @@ class GenericGatewayAction {
     private Client $praticiensClient;
     private Client $rdvClient;
     private Client $toubilibClient;
+    private Client $authClient;
 
-    public function __construct(Client $praticiensClient, Client $rdvClient, Client $toubilibClient){
+    public function __construct(Client $praticiensClient, Client $rdvClient, Client $toubilibClient, Client $authClient){
         $this->praticiensClient = $praticiensClient;
         $this->rdvClient = $rdvClient;
         $this->toubilibClient = $toubilibClient;
+        $this->authClient = $authClient;
     }
 
     public function __invoke(Request $request, Response $response, array $args): Response {
@@ -73,7 +75,7 @@ class GenericGatewayAction {
             return $this->praticiensClient;
         }
         // app-auth
-        if (str_starts_with($path, '/auth')) {
+        if (str_starts_with($path, '/signin')) {
             return $this->authClient;
         }
         // default api.toubilib
