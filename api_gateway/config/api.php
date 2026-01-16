@@ -11,7 +11,6 @@ return [
         $settings = $c->get('settings');
         return new Client([
             'base_uri' => $settings['services']['praticiens_api'],
-            'timeout' => 5.0,
         ]);
     },
 
@@ -19,7 +18,6 @@ return [
         $settings = $c->get('settings');
         return new Client([
             'base_uri' => $settings['services']['rdv_api'],
-            'timeout' => 5.0,
         ]);
     },
 
@@ -27,7 +25,6 @@ return [
         $settings = $c->get('settings');
         return new Client([
             'base_uri' => $settings['services']['toubilib_api'],
-            'timeout' => 5.0,
         ]);
     },
 

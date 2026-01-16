@@ -22,8 +22,7 @@ return function (App $app) {
         return $response->withHeader('Content-Type', 'application/json');
     });
     
-    $app->get('/praticiens', ListePraticiensRemoteAction::class);
-    $app->get('/praticiens/{id}', DetailPraticienRemoteAction::class);
+
     $app->post('/register', RegisterAction::class);
     $app->post('/refresh', RefreshAction::class);
     $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', GenericGatewayAction::class);
