@@ -8,6 +8,7 @@
 /api_gateway/vendor/
 /app-praticiens/vendor/
 /app-rdv/vendor/
+/app-auth/vendor/
 # Logs
 /app/logs/*
 !/app/logs/README.md
