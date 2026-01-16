@@ -31,11 +31,19 @@ return [
         ]);
     },
 
+    'client.auth' => function (Container $c) {
+        $settings = $c->get('settings');
+        return new Client([
+            'base_uri' => $settings['services']['auth_api'],
+        ]);
+    },
+
     GenericGatewayAction::class => function (Container $c) {
         return new GenericGatewayAction(
             $c->get('client.praticiens'),
             $c->get('client.rdv'),
-            $c->get('client.toubilib')
+            $c->get('client.toubilib'),
+            $c->get('client.auth')
         );
     },
 
