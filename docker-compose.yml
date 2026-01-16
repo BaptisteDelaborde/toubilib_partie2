@@ -33,7 +33,7 @@ services:
     depends_on:
       - toubiprati.db
       - toubiauth.db
-    command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
+    command: sh -c "composer install --ignore-platform-reqs || composer update --no-interaction --ignore-platform-reqs && php -S 0.0.0.0:80 -t /var/php/public"
 
   # service app-praticiens : microservice pour la gestion des praticiens
   app-praticiens:
