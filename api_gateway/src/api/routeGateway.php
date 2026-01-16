@@ -7,9 +7,11 @@ use gateway\api\actions\ListePraticiensRemoteAction;
 use gateway\api\actions\RegisterAction;
 use gateway\api\actions\RefreshAction;
 use gateway\api\actions\SigninAction;
+use gateway\api\middleware\ValidateTokenMiddleware;
 
 
 return function (App $app) {
+    $container = $app->getContainer();
     $app->get('/', function ($request, $response) {
         $response->getBody()->write(json_encode([
             'message' => 'API Gateway Toubilib',
@@ -25,6 +27,9 @@ return function (App $app) {
 
     $app->post('/register', RegisterAction::class);
     $app->post('/refresh', RefreshAction::class);
+    
+    $validateTokenMiddleware = $container->get(ValidateTokenMiddleware::class);
+
     $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', GenericGatewayAction::class);
     return $app;
 };

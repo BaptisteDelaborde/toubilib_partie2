@@ -5,6 +5,7 @@ use GuzzleHttp\Client;
 use gateway\api\actions\ListePraticiensRemoteAction;
 use gateway\api\actions\DetailPraticienRemoteAction;
 use gateway\api\actions\GenericGatewayAction;
+use gateway\api\middleware\ValidateTokenMiddleware;
 
 return [
     'client.praticiens' => function (Container $c) {
@@ -53,6 +54,12 @@ return [
     DetailPraticienRemoteAction::class => function (Container $c) {
         return new DetailPraticienRemoteAction(
             $c->get('client.praticiens')
+        );
+    },
+
+    ValidateTokenMiddleware::class => function (Container $c) {
+        return new ValidateTokenMiddleware(
+            $c->get('client.auth')
         );
     },
 ];
