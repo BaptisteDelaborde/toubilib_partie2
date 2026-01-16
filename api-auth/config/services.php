@@ -3,5 +3,4 @@
 use DI\Container;
 
 return [
-
 ];
