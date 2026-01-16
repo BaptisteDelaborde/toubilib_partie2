@@ -41,6 +41,8 @@ class JWTManager{
             throw new \Exception("Erreur de la signature du token : " . $e1->getMessage());
         }catch (BeforeValidException $e2){
             throw new \Exception("Token pas encore valide : " . $e2->getMessage());
+        } catch (\UnexpectedValueException $e3){
+            throw new \Exception("Valeur non attendue : " . $e3->getMessage());
         }
     }
 }
