@@ -86,7 +86,7 @@ class GenericGatewayAction {
         if (str_starts_with($path, '/signin')) {
             return $this->authClient;
         }
-        if (str_starts_with($path, '/token')) {
+        if (str_starts_with($path, '/tokens')) {
             return $this->authClient;
         }
         // default api.toubilib
