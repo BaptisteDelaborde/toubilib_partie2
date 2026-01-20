@@ -2,7 +2,6 @@
 
 namespace toubilib\api\middleware;
 
-use _PHPStan_90b10482a\Nette\Neon\Exception;
 use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
@@ -30,13 +29,13 @@ class AuthMiddleware
             $token = sscanf($authHeader, "Bearer %s")[0] ;
             $payload = JWT::decode($token, new Key($this->secretKey, 'HS512'));
         } catch (ExpiredException $e) {
-            throw new Exception("Token expiré");
+            throw new \Exception("Token expiré");
         } catch (SignatureInvalidException $e) {
-            throw new Exception("Signature token invalide");
+            throw new \Exception("Signature token invalide");
         } catch (BeforeValidException $e) {
-            throw new Exception("Token pas encore valide");
+            throw new \Exception("Token pas encore valide");
         } catch (\UnexpectedValueException $e) {
-            throw new Exception("Valeur non attendu reçu");
+            throw new \Exception("Valeur non attendu reçu");
         }
 
 

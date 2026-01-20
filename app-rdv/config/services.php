@@ -23,8 +23,7 @@ use toubilib\infra\adapters\PraticienRemoteAdapter;
 
 return [
     'client.praticiens' => function (Container $container) {
-        $settings = $container->get('settings');
-        $baseUri = $settings['praticiens_api_url'] ?? 'http://app-praticiens:80';
+        $baseUri = $container->get('praticiens_api_url') ?? 'http://app-praticiens:80';
         return new Client([
             'base_uri' => $baseUri,
             'timeout' => 5.0,
