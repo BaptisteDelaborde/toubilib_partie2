@@ -3,6 +3,41 @@ networks:
     driver: bridge
 
 services:
+
+  # RabbitMQ Service
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 8s
+      timeout: 30s
+      retries: 3
+    networks:
+      - toubilib.net
+    volumes:
+      - ./rabbitmq.toubi:/var/lib/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: toubi
+      RABBITMQ_DEFAULT_PASS: toubi
+
+
+  # MailCatcher (service consommateur)
+  mail.toubi:
+    build:
+      context: build
+      dockerfile: mailcatcher.Dockerfile
+    networks:
+      - toubilib.net
+    ports:
+      - "1080:1080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+
   #Api gateaway
   api_gateway:
     build:
@@ -17,6 +52,7 @@ services:
       - toubilib.net
     command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
 
+
   # service api.toubeelib : api pour la prise de rdv
   #
   api.toubilib:
@@ -24,16 +60,21 @@ services:
       context: build
       dockerfile: 8.4-cli.Dockerfile
     ports:
-      - '6080:80'
+      - "6080:80"
     volumes:
       - ./app:/var/php
     working_dir: /var/php
     networks:
       - toubilib.net
     depends_on:
-      - toubiprati.db
-      - toubiauth.db
+      toubiprati.db:
+        condition: service_started
+      toubiauth.db:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     command: sh -c "composer install --ignore-platform-reqs || composer update --no-interaction --ignore-platform-reqs && php -S 0.0.0.0:80 -t /var/php/public"
+   
 
   # service app-praticiens : microservice pour la gestion des praticiens
   app-praticiens:
@@ -48,8 +89,10 @@ services:
     networks:
       - toubilib.net
     depends_on:
-      - toubiprati.db
+      toubiprati.db:
+        condition: service_started
     command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
+
 
   # service app-rdv : microservice pour la gestion des rendez-vous
   app-rdv:
@@ -57,15 +100,19 @@ services:
       context: build
       dockerfile: 8.4-cli.Dockerfile
     ports:
-      - '6082:80'
+      - "6082:80"
     volumes:
       - ./app-rdv:/var/php
     working_dir: /var/php
     networks:
       - toubilib.net
     depends_on:
-      - toubirdv.db
+      toubirdv.db:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
+
 
   # service app-auth : microservice pour l'authentification
   app-auth:
@@ -80,11 +127,12 @@ services:
     networks:
       - toubilib.net
     depends_on:
-      - toubiauth.db
+      toubiauth.db:
+        condition: service_started
     command: sh -c "composer install && php -S 0.0.0.0:80 -t /var/php/public"
 
-  # service toubiprat.db : base de données postgresql pour les praticiens
 
+  # service toubiprat.db : base de données postgresql pour les praticiens
   toubiprati.db:
     image: 'postgres:latest'
     env_file: ./toubipratdb.env
@@ -95,6 +143,7 @@ services:
     volumes:
       - ./sql/toubiprat.schema.sql:/docker-entrypoint-initdb.d/01.schema.sql
       - ./sql/toubiprat.data.sql:/docker-entrypoint-initdb.d/02.data.sql
+
 
   toubiauth.db:
     image: 'postgres:latest'
@@ -107,6 +156,7 @@ services:
       - ./sql/toubiauth.schema.sql:/docker-entrypoint-initdb.d/03.schema.sql
       - ./sql/toubiauth.data.sql:/docker-entrypoint-initdb.d/04.data.sql
 
+
   toubirdv.db:
     image: 'postgres:latest'
     env_file: ./toubirdvdb.env
@@ -117,6 +167,7 @@ services:
     volumes:
       - ./sql/toubirdv.schema.sql:/docker-entrypoint-initdb.d/05.schema.sql
       - ./sql/toubirdv.data.sql:/docker-entrypoint-initdb.d/06.data.sql
+
 
   toubipat.db:
     image: 'postgres:latest'
@@ -139,51 +190,3 @@ services:
       - '8080:8080'
     networks:
       - toubilib.net
-
-
-#######################################
-### RabbitMQ Service
-###
-#######################################
-rabbitmq:
-  image: rabbitmq:4-management
-  #    build:
-  #      context: build
-  #      dockerfile: rabbit-stomp.Dockerfile
-  ports:
-    - '15672:15672'
-    #      - '15674:15674'
-    - '5672:5672'
-  healthcheck:
-    test: rabbitmq-diagnostics -q ping
-    interval: 8s
-    timeout: 30s
-    retries: 3
-  networks:
-    - toubilib.net
-  volumes:
-    - ./rabbitmq.toubi:/var/lib/rabbitmq
-  environment:
-    - RABBITMQ_DEFAULT_USER: toubi
-    - RABBITMQ_DEFAULT_PASS: toubi
-
-#################################################
-#
-# Ajouter dans les services qui utilisent le serveur rabbitmq :
-#      depends_on:
-#        rabbitmq:
-#           condition: service_healthy
-
-##############################################
-###
-###  MailCatcher
-###############################################
-mail.toubi:
-  build:
-    context: build
-    dockerfile: mailcatcher.Dockerfile
-  networks:
-    - toubilib.net
-  ports:
-    - '1080:1080'
-
