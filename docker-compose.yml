@@ -22,6 +22,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: toubi
       RABBITMQ_DEFAULT_PASS: toubi
+    entrypoint: /bin/sh
+    command: -c "if [ -f /var/lib/rabbitmq/.erlang.cookie ]; then chmod 600 /var/lib/rabbitmq/.erlang.cookie; fi && exec docker-entrypoint.sh rabbitmq-server"
 
 
   # MailCatcher (service consommateur)
