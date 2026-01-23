@@ -24,6 +24,7 @@ return function (App $app) {
         return $response->withHeader('Content-Type', 'application/json');
     });
     
+    
 
     $app->post('/register', RegisterAction::class);
     $app->post('/refresh', RefreshAction::class);

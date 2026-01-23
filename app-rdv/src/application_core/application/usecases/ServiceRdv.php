@@ -12,6 +12,7 @@ use toubilib\core\application\ports\api\RdvSlotDTO;
 use toubilib\core\domain\entities\Rdv as RdvEntity;
 use toubilib\core\application\ports\spi\repositoryInterfaces\PraticienRepositoryInterface;
 use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
+use toubilib\core\application\ports\spi\EventPublisherInterface;
 use toubilib\core\domain\entities\Rdv;
 
 class ServiceRdv implements ServiceRdvInterface
@@ -19,12 +20,18 @@ class ServiceRdv implements ServiceRdvInterface
     private RdvRepositoryInterface $rdvRepository;
     private ServicePraticienInterface $servicePraticien;
     private ServicePatientInterface $servicePatient;
+    private ?EventPublisherInterface $eventPublisher;
 
-    public function __construct(RdvRepositoryInterface $rdvRepository, ServicePatientInterface $servicePatient, ServicePraticienInterface $servicePraticien)
-    {
+    public function __construct(
+        RdvRepositoryInterface $rdvRepository,
+        ServicePatientInterface $servicePatient,
+        ServicePraticienInterface $servicePraticien,
+        ?EventPublisherInterface $eventPublisher = null
+    ) {
         $this->rdvRepository = $rdvRepository;
         $this->servicePatient = $servicePatient;
         $this->servicePraticien = $servicePraticien;
+        $this->eventPublisher = $eventPublisher;
     }
 
     public function listerRdv(): array
@@ -118,7 +125,39 @@ class ServiceRdv implements ServiceRdvInterface
         );
 
         $this->rdvRepository->save($rdv);
-        return new RdvDTO($rdv->getId(), $rdv->getPraticienId(), $rdv->getPatientId(), $rdv->getDateHeureDebut(), $rdv->getStatus(), $rdv->getDuree(), $rdv->getDateHeureFin(), $rdv->getDateCreation(), $rdv->getMotifVisite());
+        
+        $rdvDTO = new RdvDTO(
+            $rdv->getId(),
+            $rdv->getPraticienId(),
+            $rdv->getPatientId(),
+            $rdv->getDateHeureDebut(),
+            $rdv->getStatus(),
+            $rdv->getDuree(),
+            $rdv->getDateHeureFin(),
+            $rdv->getDateCreation(),
+            $rdv->getMotifVisite()
+        );
+
+        if ($this->eventPublisher !== null) {
+            try {
+                $rdvData = $rdvDTO->toArray();
+                $destinataires = [
+                    [
+                        'type' => 'praticien',
+                        'email' => $praticien->email
+                    ],
+                    [
+                        'type' => 'patient',
+                        'email' => $patient->email
+                    ]
+                ];
+                $this->eventPublisher->publishRdvEvent('CREATE', $rdvData, $destinataires);
+            } catch (\Exception $e) {
+                error_log("Erreur lors de l'envoi de l'événement RDV: " . $e->getMessage());
+            }
+        }
+
+        return $rdvDTO;
     }
 
     public function annulerRendezVous(string $id): RdvDTO

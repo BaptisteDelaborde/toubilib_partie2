@@ -17,9 +17,11 @@ use GuzzleHttp\Client;
 use toubilib\core\application\usecases\ServiceAuthz;
 use toubilib\core\application\usecases\ServicePatient;
 use toubilib\core\application\ports\spi\repositoryInterfaces\RdvRepositoryInterface;
+use toubilib\core\application\ports\spi\EventPublisherInterface;
 use toubilib\core\application\usecases\ServiceRdv;
 use toubilib\core\application\usecases\ServiceUser;
 use toubilib\infra\adapters\PraticienRemoteAdapter;
+use toubilib\infra\adapters\RabbitMQEventPublisher;
 
 return [
     'client.praticiens' => function (Container $container) {
@@ -38,11 +40,21 @@ return [
         $repository = $container->get(PatientRepositoryInterface::class);
         return new ServicePatient($repository);
     },
+    EventPublisherInterface::class => function (Container $container) {
+        $host = $_ENV['RABBITMQ_HOST'] ?? 'rabbitmq';
+        $port = (int)($_ENV['RABBITMQ_PORT'] ?? 5672);
+        $user = $_ENV['RABBITMQ_USER'] ?? 'toubi';
+        $password = $_ENV['RABBITMQ_PASS'] ?? 'toubi';
+        $vhost = $_ENV['RABBITMQ_VHOST'] ?? '/';
+        $exchangeName = $_ENV['RABBITMQ_EXCHANGE'] ?? 'rdv.events';
+        return new RabbitMQEventPublisher($host, $port, $user, $password, $vhost, $exchangeName);
+    },
     ServiceRdvInterface::class => function (Container $container){
         $repository = $container->get(RdvRepositoryInterface::class);
         $servicePatient = $container->get(ServicePatientInterface::class);
         $servicePatricien = $container->get(ServicePraticienInterface::class);
-        return new ServiceRdv($repository, $servicePatient, $servicePatricien);
+        $eventPublisher = $container->get(EventPublisherInterface::class);
+        return new ServiceRdv($repository, $servicePatient, $servicePatricien, $eventPublisher);
     },
     ServiceUserInterface::class => function (Container $container) {
         $authRepo = $container->get(AuthRepositoryInterface::class);
