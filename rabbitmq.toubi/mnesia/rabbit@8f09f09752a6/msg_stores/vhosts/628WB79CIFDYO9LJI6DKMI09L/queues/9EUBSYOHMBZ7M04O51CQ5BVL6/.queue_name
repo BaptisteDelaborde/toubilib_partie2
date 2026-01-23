@@ -1,0 +1,3 @@
+VHOST: /
+QUEUE: mail.notifications
+INDEX: v2
