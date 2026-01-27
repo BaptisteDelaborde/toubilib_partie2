@@ -31,6 +31,6 @@ return function (App $app) {
     
     $validateTokenMiddleware = $container->get(ValidateTokenMiddleware::class);
 
-    $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', GenericGatewayAction::class);
+    $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', GenericGatewayAction::class)->add($validateTokenMiddleware::class);
     return $app;
 };

@@ -21,6 +21,12 @@ class ValidateTokenMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $path = $request->getUri()->getPath();
+
+        if (!str_starts_with($path, '/rdvs')) {
+            return $handler->handle($request);
+        }
+
         // Extraire le token du header Authorization
         $authHeader = $request->getHeaderLine('Authorization');
         

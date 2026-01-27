@@ -20,7 +20,7 @@ use toubilib\api\actions\HistoriquePatientAction;
 return function( \Slim\App $app):\Slim\App {
 
     //Route pour liser le rdv correspondant à l'id rentré
-    $app->get('/rdvs/{id}', GetRdvById::class)->setName("rdvs.id")->add(AuthzMiddleware::class)->add(AuthMiddleware::class);
+    $app->get('/rdvs/{id}', GetRdvById::class)->setName("rdvs.id");
 
     // Route pour lister les créneaux occupés d'un praticien sur une période
     $app->get('/praticiens/{id}/rdvs', ListerCreneauxOccupesAction::class)->setName("praticien.crenaux");
@@ -47,7 +47,7 @@ return function( \Slim\App $app):\Slim\App {
     $app->post('/signin', SigninAction::class)->setName('signin');
 
     // Route pour récupérer l'historique des consultations d'un patient
-    $app->get('/patients/{id}/consultations',HistoriquePatientAction::class)->setName('patients.consultations')->add(AuthzMiddleware::class)->add(AuthMiddleware::class);;
+    $app->get('/patients/{id}/consultations',HistoriquePatientAction::class)->setName('patients.consultations');;
 
 
     return $app;
