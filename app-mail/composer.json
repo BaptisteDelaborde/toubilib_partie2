@@ -1,5 +1,12 @@
 {
   "require": {
-    "php-amqplib/php-amqplib": "^3.6"
+    "php-amqplib/php-amqplib": "^3.6",
+    "symfony/mailer": "^7.0",
+    "symfony/mime": "^7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "AppMail\\": "src/"
+    }
   }
 }
