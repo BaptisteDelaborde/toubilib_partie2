@@ -27,17 +27,30 @@ services:
 
 
   # MailCatcher (service consommateur)
-  app-mail:
+  mailcatcher:
     build:
       context: build
       dockerfile: mailcatcher.Dockerfile
+    ports:
+      - "1081:1080"
+      - "1025:1025"
     networks:
       - toubilib.net
-    ports:
-      - "1080:1080"
+
+  # app-mail
+  app-mail:
+    build:
+      context: build
+      dockerfile: 8.4-cli.Dockerfile
+    volumes:
+      - ./app-mail:/var/php
+    working_dir: /var/php
+    networks:
+      - toubilib.net
     depends_on:
       rabbitmq:
         condition: service_healthy
+    command: sh -c "composer install && php consumer.php || tail -f /dev/null"
 
 
   #Api gateaway
