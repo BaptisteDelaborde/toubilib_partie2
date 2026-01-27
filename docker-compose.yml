@@ -27,7 +27,7 @@ services:
 
 
   # MailCatcher (service consommateur)
-  mail.toubi:
+  app-mail:
     build:
       context: build
       dockerfile: mailcatcher.Dockerfile
