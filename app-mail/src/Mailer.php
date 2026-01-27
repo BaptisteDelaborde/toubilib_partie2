@@ -6,7 +6,7 @@ use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Email;
 
-class MailerService
+class MailerService implements MailerInterface
 {
     private Mailer $mailer;
     private string $from;

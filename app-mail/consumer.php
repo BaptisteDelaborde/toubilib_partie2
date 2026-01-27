@@ -4,6 +4,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+use AppMail\MailerInterface;
 use AppMail\MailerService;
 
 $host = 'rabbitmq';
@@ -27,7 +28,19 @@ $channel->queue_bind($queueName, $exchangeName);
 
 echo "[MAIL] En attente de messages\n";
 
-$mailer = new MailerService();
+/* Création du mailer */
+function createMailer(): MailerInterface
+{
+    $impl = getenv('MAILER_IMPL') ?: 'symfony';
+
+    switch ($impl) {
+        case 'symfony':
+        default:
+            return new MailerService();
+    }
+}
+
+$mailer = createMailer();
 
 $callback = function (AMQPMessage $msg) use ($mailer) {
     echo "\n[MAIL] Message reçu, décodage\n";
