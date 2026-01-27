@@ -17,7 +17,7 @@ class HistoriquePatientAction
     {
         $patientId = $args['id'];
 
-        $consultations = $this->serviceRdv->getConsultationsByPatient($patientId);
+        $consultations = $this->serviceRdv->getHistoriquePatient($patientId);
 
         $response->getBody()->write(json_encode($consultations));
 
