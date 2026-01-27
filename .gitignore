@@ -22,5 +22,6 @@ composer.phar
 composer.lock
 /app/vendor/
 *.env
-
+app-mail/vendor/
 rabbitmq.toubi/mnesia/*
+
