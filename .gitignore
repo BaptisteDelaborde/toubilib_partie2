@@ -24,3 +24,4 @@ composer.lock
 *.env
 app-mail/vendor/
 rabbitmq.toubi/mnesia/*
+
